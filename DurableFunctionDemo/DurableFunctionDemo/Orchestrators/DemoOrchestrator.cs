@@ -1,12 +1,9 @@
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using DurableFunctionDemo.ActivityFunctions;
 using DurableFunctionDemo.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
 namespace DurableFunctionDemo.Orchestrators
