@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DurableFunctionDemo.ActivityFunctions;
+using DurableFunctionDemo.Models;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -13,18 +14,27 @@ namespace DurableFunctionDemo.Orchestrators
     public static class DemoOrchestrator
     {
         [FunctionName(nameof(DemoOrchestrator))]
-        public static async Task<List<string>> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context)
+        public static async Task RunOrchestrator(
+            [OrchestrationTrigger] IDurableOrchestrationContext context,
+            ILogger log)
         {
-            var outputs = new List<string>();
+            var repos = await context.CallActivityAsync<List<string>>(nameof(GetUserRepositoryList), null);
+            var list = string.Join(',', repos);
+            log.LogInformation($"Repository list: {list}");
 
-            // Replace "hello" with the name of your Durable Activity Function.
-            outputs.Add(await context.CallActivityAsync<string>(nameof(HelloActivity), "Tokyo"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(HelloActivity), "Seattle"));
-            outputs.Add(await context.CallActivityAsync<string>(nameof(HelloActivity), "London"));
+            var tasks = new List<Task<RepoViewCount>>();
 
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
-            return outputs;
+            // fan-out
+            foreach (var repo in repos)
+            {
+                var task = context.CallActivityAsync<RepoViewCount>(nameof(GetRepositoryViewCount), repo);
+                tasks.Add(task);
+            }
+
+            // fan-in
+            var repoViewCounts = await Task.WhenAll(tasks);
+
+            await context.CallActivityAsync(nameof(ReportRepoViewCount), repoViewCounts);
         }
     }
 }
