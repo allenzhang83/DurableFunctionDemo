@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DurableFunctionDemo.ActivityFunctions;
@@ -15,7 +16,18 @@ namespace DurableFunctionDemo.Orchestrators
             [OrchestrationTrigger] IDurableOrchestrationContext context,
             ILogger log)
         {
-            var repos = await context.CallActivityAsync<List<string>>(nameof(GetUserRepositoryList), null);
+            var mode = Environment.GetEnvironmentVariable("Mode");
+            var activityFunctionNames = mode switch
+            {
+                "naive" => new List<string> { nameof(GetUserRepositoryList), nameof(GetRepositoryViewCount) },
+                "autofac" => new List<string> { nameof(GetUserRepositoryListAutofac), nameof(GetRepositoryViewCountAutofac) },
+                _ => new List<string> { nameof(GetUserRepositoryList), nameof(GetRepositoryViewCount) }
+            };
+
+            var getUserRepositoryListFunctionName = activityFunctionNames[0];
+            var getRepositoryViewCountFunctionName = activityFunctionNames[1];
+
+            var repos = await context.CallActivityAsync<List<string>>(getUserRepositoryListFunctionName, null);
             var list = string.Join(',', repos);
             log.LogInformation($"Repository list: {list}");
 
@@ -24,7 +36,7 @@ namespace DurableFunctionDemo.Orchestrators
             // fan-out
             foreach (var repo in repos)
             {
-                var task = context.CallActivityAsync<RepoViewCount>(nameof(GetRepositoryViewCount), repo);
+                var task = context.CallActivityAsync<RepoViewCount>(getRepositoryViewCountFunctionName, repo);
                 tasks.Add(task);
             }
 
