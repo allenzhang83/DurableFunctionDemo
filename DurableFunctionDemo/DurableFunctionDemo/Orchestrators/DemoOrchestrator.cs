@@ -21,6 +21,7 @@ namespace DurableFunctionDemo.Orchestrators
             {
                 "naive" => new List<string> { nameof(GetUserRepositoryList), nameof(GetRepositoryViewCount) },
                 "autofac" => new List<string> { nameof(GetUserRepositoryListAutofac), nameof(GetRepositoryViewCountAutofac) },
+                "core" => new List<string> { nameof(GetUserRepositoryListCore), nameof(GetRepositoryViewCountCore) },
                 _ => new List<string> { nameof(GetUserRepositoryList), nameof(GetRepositoryViewCount) }
             };
 
