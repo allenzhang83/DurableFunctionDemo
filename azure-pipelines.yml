@@ -18,6 +18,10 @@ variables:
 
   # Working Directory
   workingDirectory: '$(System.DefaultWorkingDirectory)/DurableFunctionDemo/DurableFunctionDemo'
+  
+  # GitHub API credentials
+  GitHubUserName: 'allenzhang83'
+  GitHubPassword: 'MyTopSecret'
 
 stages:
 - stage: Build
@@ -74,3 +78,4 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+			  appSettings: '-GitHubUserName $(GitHubUserName) -GitHubPassword $(MyTopSecret)'

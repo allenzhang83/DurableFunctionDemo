@@ -1,5 +1,4 @@
-﻿using AutofacOnFunctions.Services.Ioc;
-using DurableFunctionDemo.Models;
+﻿using DurableFunctionDemo.Models;
 using DurableFunctionDemo.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
