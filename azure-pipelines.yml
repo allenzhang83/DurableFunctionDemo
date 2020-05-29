@@ -78,4 +78,4 @@ stages:
               appType: functionApp
               appName: $(functionAppName)
               package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
-			  appSettings: '-GitHubUserName $(GitHubUserName) -GitHubPassword $(MyTopSecret)'
+			        appSettings: '-GitHubUserName $(GitHubUserName) -GitHubPassword $(MyTopSecret)'
