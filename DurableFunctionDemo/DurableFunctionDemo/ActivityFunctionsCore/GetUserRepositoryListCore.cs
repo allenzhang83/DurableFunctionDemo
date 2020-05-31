@@ -1,5 +1,4 @@
-﻿using AutofacOnFunctions.Services.Ioc;
-using DurableFunctionDemo.Services;
+﻿using DurableFunctionDemo.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Extensions.Logging;
@@ -20,7 +19,6 @@ namespace DurableFunctionDemo.ActivityFunctions
         [FunctionName(nameof(GetUserRepositoryListCore))]
         public async Task<List<string>> Run(
             [ActivityTrigger] IDurableActivityContext context,
-            [Inject] IGitHubApiService gitHubApiService,
             ILogger log)
         {
             return await _gitHubApiService.GetUserRepositoryList();
